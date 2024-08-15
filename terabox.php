@@ -1,55 +1,38 @@
 <?php
 
-// Define the API endpoint
-$api_url = "https://terabox-online-player-and-downloader-api.p.rapidapi.com/";
+// Retrieve the URL parameter from the request
+$inputUrl = $_REQUEST["url"];
 
-// Define the link
-$link = "https://teraboxapp.com/s/1tD839uEjRzGUbeKYg24UBg";
+// Encode the URL for safe transmission
+$encodedUrl = urlencode($inputUrl);
 
-// Encode the link for URL usage
-$encoded_link = urlencode($link);
-
-// Construct the full API URL with the encoded link
-$url = $api_url . "?link=" . $encoded_link;
-
-// API headers
-$headers = [
-    "Accept: application/json",
-    "x-rapidapi-ua: RapidAPI-Playground",
-    "x-rapidapi-key: 635b1a46demshc45648e0f4e72e5p19f3a1jsn3ceb2eaad660",
-    "x-rapidapi-host: terabox-online-player-and-downloader-api.p.rapidapi.com"
-];
+// Define the API endpoint and key
+$apiUrl = "https://terabox-online-player-and-downloader-api.p.rapidapi.com/?link=" . $encodedUrl;
+$apiKey = "635b1a46demshc45648e0f4e72e5p19f3a1jsn3ceb2eaad660";
 
 // Initialize cURL
-$ch = curl_init($url);
+$curl = curl_init($apiUrl);
 
 // Set cURL options
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_HTTPHEADER, [
+    "Accept: application/json",
+    "x-rapidapi-key: $apiKey",
+    "x-rapidapi-host: terabox-online-player-and-downloader-api.p.rapidapi.com",
+]);
 
-// Execute the request and get the response
-$response = curl_exec($ch);
+// Execute the cURL request
+$response = curl_exec($curl);
 
-// Check for errors
-if (curl_errno($ch)) {
-    echo 'Error: ' . curl_error($ch);
+// Check for cURL errors
+if ($response === false) {
+    echo "cURL Error: " . curl_error($curl);
 } else {
-    // Decode the JSON response
-    $data = json_decode($response, true);
-    
-    // Output the URL
-    if (isset($data['url'])) {
-        echo $data['url'] . "\n";
-    } else {
-        echo 'URL not found in response' . "\n";
-    }
-    
-    // Add custom messages with precise alignment
-    echo str_pad("Api Made By Sohel Ahammad", 40, " ", STR_PAD_LEFT) . "\n";
-    echo str_pad("🗨️ @sohelahammad5853", 40, " ", STR_PAD_LEFT);
+    // Output the response
+    echo $response;
 }
 
-// Close the cURL session
-curl_close($ch);
+// Close cURL
+curl_close($curl);
 
 ?>
